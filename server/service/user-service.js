@@ -5,13 +5,14 @@ const MailService = require("../service/mail-service");
 const TokenService = require("../service/token-service");
 const UserDto = require("../dtos/user-dto");
 const tokenService = require("../service/token-service");
+const ApiError = require("../exceptions/api-error");
 
 class UserService {
   async registration(email, password) {
     const candidate = await UserModel.findOne({ email });
 
     if (candidate) {
-      throw new Error(
+      throw ApiError.BadRequest(
         `Пользователь с почтовым адресом ${email} уже существует!`
       );
     }
@@ -41,7 +42,7 @@ class UserService {
     const user = await UserModel.findOne({ activationLink });
 
     if (!user) {
-      throw new Error("Некоректная ссылка активации");
+      throw ApiError.BadRequest("Некоректная ссылка активации");
     }
 
     user.isActivated = true;
