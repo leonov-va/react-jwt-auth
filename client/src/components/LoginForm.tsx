@@ -37,7 +37,8 @@ const LoginForm: FC = () => {
         Логин
       </Button>
       <Button
-        variant="primary"
+        className="mx-2"
+        variant="success"
         type="submit"
         onClick={() => store.registration(email, password)}
       >
