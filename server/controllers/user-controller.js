@@ -1,6 +1,7 @@
 const UserService = require("../service/user-service");
 const { validationResult } = require("express-validator");
 const ApiError = require("../exceptions/api-error");
+const userService = require("../service/user-service");
 
 class UserController {
   async registration(req, res, next) {
@@ -40,6 +41,10 @@ class UserController {
   }
   async logout(req, res, next) {
     try {
+      const { refreshfToken } = req.cookies;
+      const token = await userService.logout(refreshToken);
+      res.clearCookie("refreshToken");
+      return res.json(token);
     } catch (e) {
       next(e);
     }

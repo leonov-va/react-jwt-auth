@@ -4,7 +4,6 @@ const UserModel = require("../models/user-model");
 const MailService = require("../service/mail-service");
 const TokenService = require("../service/token-service");
 const UserDto = require("../dtos/user-dto");
-const tokenService = require("../service/token-service");
 const ApiError = require("../exceptions/api-error");
 
 class UserService {
@@ -33,7 +32,7 @@ class UserService {
     const userDto = new UserDto(user); // id, email, isActivated
     const tokens = TokenService.generateTokens({ ...userDto });
 
-    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+    await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
     return { ...tokens, user: userDto };
   }
@@ -61,10 +60,15 @@ class UserService {
     }
 
     const userDto = new UserDto(user);
-    const tokens = tokenService.generateTokens({ ...userDto });
-    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+    const tokens = TokenService.generateTokens({ ...userDto });
+    await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
     return { ...tokens, user: userDto };
+  }
+
+  async logout(refreshToken) {
+    const token = await TokenService.removeToken(refreshToken);
+    return token;
   }
 }
 
